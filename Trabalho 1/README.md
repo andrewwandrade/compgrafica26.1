@@ -6,4 +6,4 @@ O cenário precisa ser montado pelo programa (ou seja, nada de fazer ele todo ex
 
 ### Observações
 
-O trabalho utiliza de bibliotecas prontas preparadas pelo professor.
+O trabalho utiliza bibliotecas prontas preparadas pelo professor.
