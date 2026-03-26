@@ -142,14 +142,66 @@ std::vector<Pixel> simple_rasterize_triangle(const Tri& P){
 }
 
 inline float intersection(vec2 P1, vec2 P2, int y){
-	/* TAREFA - AULA 06 */
-	return 0.0f;
+	//Verifica se existe interseção com a reta
+	//Caso o y fornecido seja maior ou menor do que o y dos pontos ao mesmo tempo, não teremos interseção em nenhum momento
+	if((y > P1[1] && y > P2[1]) || (y < P1[1] && y < P2[1])){ //Não considera menor ou igual
+		return NAN;
+	}
+
+	//Verifica se existem infinitas soluções
+	//I.e., quando o y fornecido é igual ao y dos dois pontos
+	if(P1[1] == P2[1] && P1[1] == y){
+		return P1[0];
+	}
+	
+	float dy = P2[1] - P1[1];
+	if (std::abs(dy) < 1e-6){ // Serve para evitar a divisão por zero em linhas horizontais
+		return NAN; 
+	}
+
+	//Realiza a interpolação linear
+	float x = P1[0]+(P2[0]-P1[0])*(y - P1[1])/dy;
+
+	return x;
 }
 
 template<class Tri>
 std::vector<Pixel> scanline(const Tri& P){
 	std::vector<Pixel> out;
-	/* TAREFA - AULA 06 */
+	
+	//Encontra o ymin e ymax do triângulo
+    int ymax = ceil(std::max({P[0][1], P[1][1], P[2][1]}));
+    int ymin = floor(std::min({P[0][1], P[1][1], P[2][1]}));
+
+    //Loop para cada scanline
+    for (int ys=ymin; ys <= ymax; ++ys) {
+        
+        //Encontra os pontos de interseção entre cada aresta e a scanline y=ys
+        //Arestas do triângulo: (v0, v1); (v1, v2); (v2, v0)
+        float x1 = intersection(P[0], P[1], ys);
+        float x2 = intersection(P[1], P[2], ys);
+        float x3 = intersection(P[2], P[0], ys);
+
+        //Encontra Xmin e Xmax das interseções
+        float x_inicio = fmin(fmin(x1, x2), x3); //fmin/fmax ignora o valor caso ele seja NAN.
+        float x_final = fmax(fmax(x1, x2), x3);
+
+        //Caso todas as interseções em x sejam NAN (ys fora do triângulo), x_inicio é definido como NAN
+        if (std::isnan(x_inicio)){
+			continue;
+		}
+
+        //Pinta todos os pixels entre xmin e xmax
+        //floor/ceil ou cast são usados para garantir que cobrimos os pixels inteiros (arredonda para cima ou para baixo)
+        int ix_inicio = ceil(x_inicio);
+        int ix_final = floor(x_final);
+
+		//Pinta, de fato, os pixels
+        for (int x = ix_inicio; x <= ix_final; ++x) {
+            out.push_back({x, ys});
+        }
+    }
+
 	return out;
 }
 
