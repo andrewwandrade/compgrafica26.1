@@ -188,7 +188,7 @@ std::vector<Pixel> scanline(const Tri& P){
 		}
 
         //Pinta todos os pixels entre xmin e xmax
-        //floor/ceil ou cast são usados para garantir que cobrimos os pixels inteiros (arredonda para cima ou para baixo)
+        //floor/ceil são usados para garantir que cobrimos os pixels inteiros (arredonda para cima ou para baixo)
         int ix_inicio = ceil(x_inicio);
         int ix_final = floor(x_final);
 
