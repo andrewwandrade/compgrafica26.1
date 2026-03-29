@@ -154,12 +154,8 @@ inline float intersection(vec2 P1, vec2 P2, int y){
 		return P1[0];
 	}
 	
-	float dy = P2[1] - P1[1];
-	if (std::abs(dy) < 1e-6){ // Serve para evitar a divisão por zero em linhas horizontais
-		return NAN; 
-	}
-
 	//Realiza a interpolação linear
+	float dy = P2[1] - P1[1];
 	float x = P1[0]+(P2[0]-P1[0])*(y - P1[1])/dy;
 
 	return x;
